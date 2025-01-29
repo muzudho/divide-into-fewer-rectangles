@@ -6,13 +6,19 @@ def main():
     # --------------
 
     prompt = f"""横幅、縦幅のあとに図形を続けてください。
-例：
+EXAMPLE
+-------
+
 7 5
 ..xxx..
 xxxxx..
 xxxxxxx
 ..xxxxx
 ...xxxx
+
+INPUT
+-----
+
 """
     lines = input(prompt)
     width, height = map(int, lines.split(' '))
