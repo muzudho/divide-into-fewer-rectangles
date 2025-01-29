@@ -60,8 +60,11 @@ INPUT
     #         board=board_rw)
 
     if short_side == WIDTH_IS_SHORTER:
-        # 横の方が短いときは、反時計回りに９０°回転させる
-        width, height, board_rw = rotate90_counterclockwise(
+        # 横の方が短いときは、時計回りに９０°回転させる
+        #
+        # NOTE 反時計回りより、時計回りの方が、あとで逆回転して戻したときに、連Id が自然な方向に振られる
+        #
+        width, height, board_rw = rotate90_clockwise(
                 width=width,
                 height=height,
                 board_r=board_rw)
@@ -95,6 +98,15 @@ INPUT
             board_rw=board_rw,
             end_ren_id=end_ren_id)
 
+
+    if short_side == WIDTH_IS_SHORTER:
+        # 反時計回りに９０°回転させていたのなら、反時計回りに９０°回転させて戻す
+        width, height, board_rw = rotate90_counterclockwise(
+                width=width,
+                height=height,
+                board_r=board_rw)
+
+
     # 結果表示
     print("""\
 
@@ -120,6 +132,25 @@ def rotate90_counterclockwise(width, height, board_r):
         for old_x in range(0, old_width):
             new_x = old_y
             new_y = (width-1-old_x)
+            new_board_w[new_y * new_width + new_x] = old_board_r[old_y * old_width + old_x]
+
+    return new_width, new_height, new_board_w
+
+
+def rotate90_clockwise(width, height, board_r):
+    """時計回りに９０°回転
+    """
+    # 反時計回り
+    old_width = width               # 退避
+    old_height = height
+    old_board_r = board_r
+    new_width = old_height              # ９０°回転
+    new_height = old_width
+    new_board_w = list(old_board_r)     # シャローコピー
+    for old_y in range(0, old_height):
+        for old_x in range(0, old_width):
+            new_x = (height-1-old_y)
+            new_y = old_x
             new_board_w[new_y * new_width + new_x] = old_board_r[old_y * old_width + old_x]
 
     return new_width, new_height, new_board_w
