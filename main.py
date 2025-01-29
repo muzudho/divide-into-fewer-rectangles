@@ -1,3 +1,4 @@
+import math
 import traceback
 
 
@@ -154,19 +155,63 @@ def shredded(width, height, board_rw):
 def erosion(width, height, board_rw):
     """浸食フェーズ
     """
+
+    # 大きいId
+    big_id = width * height
+
+
+    # 上の行から浸食済みのId
+    erosion_id = set()
+
     # 盤面スキャン
     ren_id = EMPTY
     for y1 in range(0, height):
+
+        # 現在処理中の行の中で、既に出てきた連Id
+        ren_id_in_same_row = set()
+
         for x1 in range(0, width):
             index1 = y1 * width + x1
 
-            # 連Idが変わった。新しい連Idの始まり
+            # 連Idが変わった。既存、または新しい連Idの始まり
             if ren_id != board_rw[index1]:
                 ren_id = board_rw[index1]
 
                 # 連Id が 0 なら空地。無視する
                 if board_rw[index1] == EMPTY:
                     continue
+
+                # 現在処理中の行の中で、処理した連Id が、再び出てきたケース
+                if ren_id in ren_id_in_same_row:
+                    # まだ使われていないIdを付けたい
+
+                    old_ren_id = board_rw[y1 * width + x1]
+                    board_rw[y1 * width + x1] = big_id
+
+                    x3 = x1 + 1
+                    while x3 < width:
+                        if board_rw[y1 * width + x3] != ren_id:     # 連の幅に達した
+                            break
+
+                        if board_rw[y1 * width + x1] == EMPTY:      # 空地に達した
+                            break
+
+                        if old_ren_id != board_rw[y1 * width + x3]:     # 連続が終わった
+                            break
+
+                        board_rw[y1 * width + x3] = big_id
+                        x3 += 1
+
+                    ren_id = big_id
+                    big_id += 1
+
+                ren_id_in_same_row.add(ren_id)
+
+
+                # 上の行から浸食済みの連Idなら無視する
+                if ren_id in erosion_id:
+                    continue
+
 
 
                 # 連を下に伸ばせるか判定します
@@ -192,6 +237,8 @@ def erosion(width, height, board_rw):
 
                     # 下に伸ばす
                     if can_extend:
+                        erosion_id.add(ren_id)  # 浸食済みのIdとして記憶
+
                         x3 = x1
                         while x3 < width:
                             if board_rw[y1 * width + x3] != ren_id:
@@ -203,10 +250,25 @@ def erosion(width, height, board_rw):
 
 
 def print_board(width, height, board):
+    # 最大の連Idを調べる
+    max_ren_id = 0
     for y in range(0, height):
         for x in range(0, width):
             index = y * width + x
-            print(board[index], end='')
+            ren_id = board[index]
+            max_ren_id = max(max_ren_id, ren_id)
+
+    # 最大の連Idの桁数を調べる
+    digits = math.floor(math.log10(max_ren_id) + 1)     # 常用対数を取り、１を足し、端数を削除
+    print(f"★ {max_ren_id=} の桁数は {digits=}")
+
+
+    # 印字
+    for y in range(0, height):
+        for x in range(0, width):
+            index = y * width + x
+            ren_id = board[index]
+            print(str(ren_id).rjust(digits), end='')
         print() # 改行
 
 
