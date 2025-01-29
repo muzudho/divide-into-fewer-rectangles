@@ -52,25 +52,21 @@ INPUT
         short_side = WIDTH_IS_SHORTER
 
 
+    # print('A')
+    # print_board(
+    #         width=width,
+    #         height=height,
+    #         board=board_rw)
+
     if short_side == WIDTH_IS_SHORTER:
         # 横の方が短いときは、反時計回りに９０°回転させる
-        old_width = width               # 退避
-        old_height = height
-        old_board = board_rw
-        new_width = old_height              # ９０°回転
-        new_height = old_width
-        new_board = list(old_board)     # シャローコピー
-        for old_y in range(0, old_height):
-            for old_x in range(0, old_width):
-                new_x = old_y
-                new_y = (width-1-old_x)
-                new_board[new_y * new_width + new_x] = old_board[old_y * old_width + old_x]
-
-        width = new_width
-        height = new_height
-        board_rw = new_board
+        width, height, board_rw = rotate90_counterclockwise(
+                width=width,
+                height=height,
+                board_r=board_rw)
 
 
+    # print('B')
     # print_board(
     #         width=width,
     #         height=height,
@@ -84,6 +80,7 @@ INPUT
             board_rw=board_rw)
 
 
+    # print('C')
     # print_board(
     #         width=width,
     #         height=height,
@@ -105,6 +102,25 @@ RESULT
             width=width,
             height=height,
             board=board_rw)
+
+
+def rotate90_counterclockwise(width, height, board_r):
+    """反時計回りに９０°回転
+    """
+    # 反時計回り
+    old_width = width               # 退避
+    old_height = height
+    old_board_r = board_r
+    new_width = old_height              # ９０°回転
+    new_height = old_width
+    new_board_w = list(old_board_r)     # シャローコピー
+    for old_y in range(0, old_height):
+        for old_x in range(0, old_width):
+            new_x = old_y
+            new_y = (width-1-old_x)
+            new_board_w[new_y * new_width + new_x] = old_board_r[old_y * old_width + old_x]
+
+    return new_width, new_height, new_board_w
 
 
 def shredded(width, height, board_rw):
@@ -145,8 +161,13 @@ def erosion(width, height, board_rw):
             index1 = y1 * width + x1
 
             # 連Idが変わった。新しい連Idの始まり
-            if ren_id != board_rw[index1] and board_rw[index1] != EMPTY:
+            if ren_id != board_rw[index1]:
                 ren_id = board_rw[index1]
+
+                # 連Id が 0 なら空地。無視する
+                if board_rw[index1] == EMPTY:
+                    continue
+
 
                 # 連を下に伸ばせるか判定します
 
