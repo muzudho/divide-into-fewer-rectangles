@@ -216,40 +216,32 @@ def erosion(width, height, board_rw, end_ren_id):
                     continue
 
 
-
-                # 連を下に伸ばせるか判定します
-
                 y2 = y1 + 1
                 while y2 < height:
-                    can_extend = True
-                    x3 = x1 + 1
-                    while x3 < width:
-                        if board_rw[y1 * width + x3] != ren_id:
-                            # 連の幅に達した
-                            break
 
-                        if board_rw[y2 * width + x1] == EMPTY:
-                            can_extend = False    # 空地には伸ばせない
-                            break
+                    # 連を１行下に伸ばせるか判定します
+                    can_falling_flag = can_falling(
+                            width=width,
+                            board_rw=board_rw,
+                            x1=x1,
+                            y1=y1,
+                            y2=y2,
+                            ren_id=ren_id)
 
-                        if board_rw[y2 * width + x1] != board_rw[y2 * width + x3]:
-                            can_extend = False    # 下には伸ばせない
-                            break
+                    # １行下に伸ばせないなら終わり
+                    if not can_falling_flag:
+                        break
 
-                        x3 += 1
 
-                    # 下に伸ばす
-                    if can_extend:
-                        new_id_set_on_next.add(ren_id)  # 浸食済みのIdとして記憶
+                    new_id_set_on_next.add(ren_id)  # 浸食済みのIdとして記憶
 
-                        x3 = x1
-                        while x3 < width:
-                            if board_rw[y1 * width + x3] != ren_id:
-                                # 連の幅に達した
-                                break
-
-                            board_rw[y2 * width + x3] = ren_id
-                            x3 += 1
+                    fill_foot(
+                            width=width,
+                            board_rw=board_rw,
+                            x1=x1,
+                            y1=y1,
+                            y2=y2,
+                            ren_id=ren_id)
 
                     y2 += 1
 
@@ -260,6 +252,50 @@ def erosion(width, height, board_rw, end_ren_id):
                 #         board=board_rw)
 
         erosion_ren_id_set = erosion_ren_id_set.union(new_id_set_on_next)  # 浸食済みのIdとして記憶
+
+
+def can_falling(width, board_rw, x1, y1, y2, ren_id):
+    """１行下に降りれるか？
+    """
+    can_falling_flag = True
+    x3 = x1 + 1
+    while x3 < width:
+        # 連の幅に達した
+        if board_rw[y1 * width + x3] != ren_id:
+            break
+
+        # 空地に達した
+        if board_rw[y2 * width + x3] == EMPTY:
+            can_falling_flag = False
+            break
+
+        # 連Idが変わった
+        if board_rw[y2 * width + x1] != board_rw[y2 * width + x3]:
+            can_falling_flag = False
+            break
+
+        x3 += 1
+
+    return can_falling_flag
+
+
+def fill_foot(width, board_rw, x1, y1, y2, ren_id):
+    x3 = x1
+    while x3 < width:
+        # 連の幅に達した
+        if board_rw[y1 * width + x3] != ren_id:
+            break
+
+        # 空地に達した
+        if board_rw[y2 * width + x3] == EMPTY:
+            break
+
+        # 連Idが変わった
+        if board_rw[y2 * width + x3] != board_rw[y2 * width + x3]:
+            break
+
+        board_rw[y2 * width + x3] = ren_id
+        x3 += 1
 
 
 def print_board(width, height, board):
