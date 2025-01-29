@@ -220,7 +220,7 @@ def erosion(width, height, board_rw, end_ren_id):
                 # 連を下に伸ばせるか判定します
 
                 y2 = y1 + 1
-                if y2 < height:
+                while y2 < height:
                     can_extend = True
                     x3 = x1 + 1
                     while x3 < width:
@@ -251,11 +251,20 @@ def erosion(width, height, board_rw, end_ren_id):
                             board_rw[y2 * width + x3] = ren_id
                             x3 += 1
 
+                    y2 += 1
+
+                # print('★X')
+                # print_board(
+                #         width=width,
+                #         height=height,
+                #         board=board_rw)
 
         erosion_ren_id_set = erosion_ren_id_set.union(new_id_set_on_next)  # 浸食済みのIdとして記憶
 
 
 def print_board(width, height, board):
+    """盤の表示
+    """
     # 最大の連Idを調べる
     max_ren_id = 0
     for y in range(0, height):
@@ -264,9 +273,9 @@ def print_board(width, height, board):
             ren_id = board[index]
             max_ren_id = max(max_ren_id, ren_id)
 
+
     # 最大の連Idの桁数を調べる
     digits = math.floor(math.log10(max_ren_id) + 1)     # 常用対数を取り、１を足し、端数を削除
-    print(f"★ {max_ren_id=} の桁数は {digits=}")
 
 
     # 印字

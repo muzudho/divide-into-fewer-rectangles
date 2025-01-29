@@ -52,3 +52,4 @@ RESULT
 ## その他の実行例
 
 * 📖 [実行例２](./docs/example2.md)
+* 📖 [実行例３](./docs/example3.md)
