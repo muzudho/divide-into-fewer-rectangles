@@ -53,7 +53,7 @@ INPUT
         short_side = WIDTH_IS_SHORTER
 
 
-    # print('A')
+    # print('★A')
     # print_board(
     #         width=width,
     #         height=height,
@@ -67,7 +67,7 @@ INPUT
                 board_r=board_rw)
 
 
-    # print('B')
+    # print('★B')
     # print_board(
     #         width=width,
     #         height=height,
@@ -81,7 +81,7 @@ INPUT
             board_rw=board_rw)
 
 
-    # print('C')
+    # print('★C')
     # print_board(
     #         width=width,
     #         height=height,
@@ -92,7 +92,8 @@ INPUT
     erosion(
             width=width,
             height=height,
-            board_rw=board_rw)
+            board_rw=board_rw,
+            end_ren_id=end_ren_id)
 
     # 結果表示
     print("""\
@@ -152,16 +153,17 @@ def shredded(width, height, board_rw):
     return ren_id
 
 
-def erosion(width, height, board_rw):
+def erosion(width, height, board_rw, end_ren_id):
     """浸食フェーズ
+
+    Parameters
+    ----------
+    end_ren_id : int
+        使われていない連Id。既存の全ての連Idより大きい。
     """
 
-    # 大きいId
-    big_id = width * height
-
-
     # 上の行から浸食済みのId
-    erosion_id = set()
+    erosion_ren_id_set = set()
 
     # 盤面スキャン
     ren_id = EMPTY
@@ -169,6 +171,7 @@ def erosion(width, height, board_rw):
 
         # 現在処理中の行の中で、既に出てきた連Id
         ren_id_in_same_row = set()
+        new_id_set_on_next = set()
 
         for x1 in range(0, width):
             index1 = y1 * width + x1
@@ -186,7 +189,7 @@ def erosion(width, height, board_rw):
                     # まだ使われていないIdを付けたい
 
                     old_ren_id = board_rw[y1 * width + x1]
-                    board_rw[y1 * width + x1] = big_id
+                    board_rw[y1 * width + x1] = end_ren_id
 
                     x3 = x1 + 1
                     while x3 < width:
@@ -199,17 +202,17 @@ def erosion(width, height, board_rw):
                         if old_ren_id != board_rw[y1 * width + x3]:     # 連続が終わった
                             break
 
-                        board_rw[y1 * width + x3] = big_id
+                        board_rw[y1 * width + x3] = end_ren_id
                         x3 += 1
 
-                    ren_id = big_id
-                    big_id += 1
+                    ren_id = end_ren_id
+                    end_ren_id += 1
 
                 ren_id_in_same_row.add(ren_id)
 
 
                 # 上の行から浸食済みの連Idなら無視する
-                if ren_id in erosion_id:
+                if ren_id in erosion_ren_id_set:
                     continue
 
 
@@ -237,7 +240,7 @@ def erosion(width, height, board_rw):
 
                     # 下に伸ばす
                     if can_extend:
-                        erosion_id.add(ren_id)  # 浸食済みのIdとして記憶
+                        new_id_set_on_next.add(ren_id)  # 浸食済みのIdとして記憶
 
                         x3 = x1
                         while x3 < width:
@@ -247,6 +250,9 @@ def erosion(width, height, board_rw):
 
                             board_rw[y2 * width + x3] = ren_id
                             x3 += 1
+
+
+        erosion_ren_id_set = erosion_ren_id_set.union(new_id_set_on_next)  # 浸食済みのIdとして記憶
 
 
 def print_board(width, height, board):
