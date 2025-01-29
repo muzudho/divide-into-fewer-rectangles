@@ -70,7 +70,8 @@ xxxxxxx
 
 
     # 右から左へ連続するものを連（れん）と呼ぶことにする。
-    ren_id = 0
+    EMPTY = 0
+    ren_id = 1
     is_stone_ren = False
     for y in range(0, height):
         for x in range(0, width):
@@ -79,15 +80,74 @@ xxxxxxx
             stone = board[index]
             if stone == 'x':
                 if not is_stone_ren:
-                    ren_id += 1
                     is_stone_ren = True
                 board[index] = ren_id
             else:
                 if is_stone_ren:
+                    ren_id += 1
                     is_stone_ren = False
-                board[index] = 0
-        is_stone_ren
+                board[index] = EMPTY
+        
+        if is_stone_ren:
+            ren_id += 1
+            is_stone_ren = False
 
+
+    end_ren_id = ren_id
+
+    # print_board(
+    #         width=width,
+    #         height=height,
+    #         board=board)
+
+
+    # 盤面スキャン
+    ren_id = EMPTY
+    for y1 in range(0, height):
+        for x1 in range(0, width):
+            index1 = y1 * width + x1
+
+            # 連Idが変わった。新しい連Idの始まり
+            if ren_id != board[index1] and board[index1] != EMPTY:
+                ren_id = board[index1]
+
+                # 連を下に伸ばせるか判定します
+
+                y2 = y1 + 1
+                if y2 < height:
+                    can_extend = True
+                    x3 = x1 + 1
+                    while x3 < width:
+                        if board[y1 * width + x3] != ren_id:
+                            # 連の幅に達した
+                            break
+
+                        if board[y2 * width + x1] == EMPTY:
+                            can_extend = False    # 空地には伸ばせない
+                            break
+
+                        if board[y2 * width + x1] != board[y2 * width + x3]:
+                            can_extend = False    # 下には伸ばせない
+                            break
+
+                        x3 += 1
+
+                    # 下に伸ばす
+                    if can_extend:
+                        x3 = x1
+                        while x3 < width:
+                            if board[y1 * width + x3] != ren_id:
+                                # 連の幅に達した
+                                break
+
+                            board[y2 * width + x3] = ren_id
+                            x3 += 1
+
+    # 結果表示
+    print("""\
+
+RESULT
+------""")
     print_board(
             width=width,
             height=height,
