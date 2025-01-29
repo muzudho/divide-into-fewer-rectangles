@@ -2,13 +2,9 @@
 
 少ない数の長方形に分ける
 
-## 実行方法
+## 実行例
 
-```shell
-py main.py
-```
-
-### 実行例
+Input:  
 
 ```shell
 py main.py
