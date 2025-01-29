@@ -77,30 +77,12 @@ INPUT
     #         board=board_rw)
 
 
-    # 右から左へ連続するものを連（れん）と呼ぶことにする。
-    ren_id = 1
-    is_stone_ren = False
-    for y in range(0, height):
-        for x in range(0, width):
-            index = y * width + x
+    # 千切りフェーズ
+    end_ren_id = shredded(
+            width=width,
+            height=height,
+            board_rw=board_rw)
 
-            stone = board_rw[index]
-            if stone == 'x':
-                if not is_stone_ren:
-                    is_stone_ren = True
-                board_rw[index] = ren_id
-            else:
-                if is_stone_ren:
-                    ren_id += 1
-                    is_stone_ren = False
-                board_rw[index] = EMPTY
-        
-        if is_stone_ren:
-            ren_id += 1
-            is_stone_ren = False
-
-
-    end_ren_id = ren_id
 
     # print_board(
     #         width=width,
@@ -123,6 +105,34 @@ RESULT
             width=width,
             height=height,
             board=board_rw)
+
+
+def shredded(width, height, board_rw):
+    """千切りフェーズ
+    """
+    # 右から左へ連続するものを連（れん）と呼ぶことにする。
+    ren_id = 1
+    is_stone_ren = False
+    for y in range(0, height):
+        for x in range(0, width):
+            index = y * width + x
+
+            stone = board_rw[index]
+            if stone == 'x':
+                if not is_stone_ren:
+                    is_stone_ren = True
+                board_rw[index] = ren_id
+            else:
+                if is_stone_ren:
+                    ren_id += 1
+                    is_stone_ren = False
+                board_rw[index] = EMPTY
+        
+        if is_stone_ren:
+            ren_id += 1
+            is_stone_ren = False
+
+    return ren_id
 
 
 def erosion(width, height, board_rw):
