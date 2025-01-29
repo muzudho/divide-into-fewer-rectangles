@@ -17,21 +17,20 @@ xxxxxxx
     lines = input(prompt)
     width, height = map(int, lines.split(' '))
 
-    pixel_art = []
+    board = []
 
     for row_number in range(0, height):
         lines = input()
-        pixel_art.extend(lines)
+        board.extend(lines)
 
-    #print(f'{pixel_art=}')
-    print()
-    print_pixel_art(
-            width=width,
-            height=height,
-            pixel_art=pixel_art)
+    # print_board(
+    #         width=width,
+    #         height=height,
+    #         board=board)
 
     # ここまで、入力
     # --------------
+
 
     # 以下、解法
     # ----------
@@ -40,44 +39,66 @@ xxxxxxx
     WIDTH_IS_SHORTER = 1
     HEIGHT_IS_SHORTER = 2
     if height < width:
-        print(f'縦が短い {width=} {height=}')
         short_side = HEIGHT_IS_SHORTER
     else:
-        print(f'横が短い {width=} {height=}')
         short_side = WIDTH_IS_SHORTER
-    
+
+
     if short_side == WIDTH_IS_SHORTER:
         # 横の方が短いときは、反時計回りに９０°回転させる
         old_width = width               # 退避
         old_height = height
-        old_pixel_art = pixel_art
+        old_board = board
         new_width = old_height              # ９０°回転
         new_height = old_width
-        new_pixel_art = list(old_pixel_art)     # シャローコピー
+        new_board = list(old_board)     # シャローコピー
         for old_y in range(0, old_height):
             for old_x in range(0, old_width):
                 new_x = old_y
                 new_y = (width-1-old_x)
-                new_pixel_art[new_y * new_width + new_x] = old_pixel_art[old_y * old_width + old_x]
+                new_board[new_y * new_width + new_x] = old_board[old_y * old_width + old_x]
 
         width = new_width
         height = new_height
-        pixel_art = new_pixel_art
+        board = new_board
 
 
-    #print(f'{pixel_art=}')
-    print()
-    print_pixel_art(
-            width=width,
-            height=height,
-            pixel_art=pixel_art)
+    # print_board(
+    #         width=width,
+    #         height=height,
+    #         board=board)
 
 
-def print_pixel_art(width, height, pixel_art):
+    # 右から左へ連続するものを連（れん）と呼ぶことにする。
+    ren_id = 0
+    is_stone_ren = False
     for y in range(0, height):
         for x in range(0, width):
             index = y * width + x
-            print(pixel_art[index], end='')
+
+            stone = board[index]
+            if stone == 'x':
+                if not is_stone_ren:
+                    ren_id += 1
+                    is_stone_ren = True
+                board[index] = ren_id
+            else:
+                if is_stone_ren:
+                    is_stone_ren = False
+                board[index] = 0
+        is_stone_ren
+
+    print_board(
+            width=width,
+            height=height,
+            board=board)
+
+
+def print_board(width, height, board):
+    for y in range(0, height):
+        for x in range(0, width):
+            index = y * width + x
+            print(board[index], end='')
         print() # 改行
 
 
