@@ -86,7 +86,7 @@ ROTATED90 CLOCKWISE
 
 
     # 千切りフェーズ
-    end_ren_id = shredded(
+    shredded(
             width=width,
             height=height,
             board_rw=board_rw)
@@ -106,8 +106,7 @@ SHREDDED
     erosion(
             width=width,
             height=height,
-            board_rw=board_rw,
-            end_ren_id=end_ren_id)
+            board_rw=board_rw)
 
 
     if short_side == WIDTH_IS_SHORTER:
@@ -203,16 +202,9 @@ def shredded(width, height, board_rw):
             ren_id += 1
             is_stone_ren = False
 
-    return ren_id
 
-
-def erosion(width, height, board_rw, end_ren_id):
+def erosion(width, height, board_rw):
     """浸食フェーズ
-
-    Parameters
-    ----------
-    end_ren_id : int
-        使われていない連Id。既存の全ての連Idより大きい。
     """
 
     # 上の行から浸食済みのId
@@ -240,30 +232,6 @@ def erosion(width, height, board_rw, end_ren_id):
                 if board_rw[index1] == EMPTY:
                     continue
 
-                # 現在処理中の行の中で、処理した連Id が、再び出てきたケース
-                if ren_id in ren_id_in_same_row:
-                    # まだ使われていないIdを付けたい
-
-                    old_ren_id = board_rw[y1 * width + x1]
-                    board_rw[y1 * width + x1] = end_ren_id
-
-                    x3 = x1 + 1
-                    # 右へ進む
-                    while x3 < width:
-                        if board_rw[y1 * width + x3] != ren_id:     # 連の幅に達した
-                            break
-
-                        if board_rw[y1 * width + x1] == EMPTY:      # 空地に達した
-                            break
-
-                        if old_ren_id != board_rw[y1 * width + x3]:     # 連続が終わった
-                            break
-
-                        board_rw[y1 * width + x3] = end_ren_id
-                        x3 += 1
-
-                    ren_id = end_ren_id
-                    end_ren_id += 1
 
                 ren_id_in_same_row.add(ren_id)
 
