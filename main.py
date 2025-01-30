@@ -117,6 +117,15 @@ SHREDDED
                 height=height,
                 board_r=board_rw)
 
+        message = stringify_board(
+                width=width,
+                height=height,
+                board=board_rw)
+        write_log(f"""\
+ROTATED90 COUNTERCLOCKWISE
+--------------------------
+{message}""")
+
 
     # 結果表示
     message = stringify_board(
@@ -310,25 +319,45 @@ EROSION {ren_id=}
 def can_falling(width, board_rw, x1, y1, y2, ren_id):
     """１行下に降りれるか？
     """
+    target_ren_id = board_rw[y2 * width + x1]
+
+    # 下の行の左外
+    if 0 < x1:
+        under_left_ren_id = board_rw[y2 * width + x1 - 1]
+    else:
+        under_left_ren_id = None
+
     can_falling_flag = True
+    under_right_ren_id = None
     x3 = x1 + 1
+
     # 右に進む
     while x3 < width:
-        # 連の幅に達した
-        if board_rw[y1 * width + x3] != ren_id:
+        under_right_ren_id = board_rw[y1 * width + x3]
+
+        # 右の外の連Idが変わった
+        if ren_id != under_right_ren_id:
             break
 
-        # 空地に達した
+        # 下が空地だ
         if board_rw[y2 * width + x3] == EMPTY:
             can_falling_flag = False
             break
 
-        # 連Idが変わった
-        if board_rw[y2 * width + x1] != board_rw[y2 * width + x3]:
+        # 下の連Idが変わった
+        if board_rw[y2 * width + x3] != target_ren_id:
             can_falling_flag = False
             break
 
         x3 += 1
+
+
+    # 下の行の１つの短冊を、２つに分断するようなら、下に浸食しません
+    if under_left_ren_id is not None or under_right_ren_id is not None:
+        pass
+    elif under_left_ren_id == target_ren_id and under_right_ren_id == target_ren_id:
+        return False
+
 
     return can_falling_flag
 
