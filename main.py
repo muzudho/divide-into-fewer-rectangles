@@ -32,10 +32,10 @@ INPUT
         lines = input()
         board_rw.extend(lines)
 
-    # print_board(
+    # print(stringify_board(
     #         width=width,
     #         height=height,
-    #         board=board_rw)
+    #         board=board_rw))
 
     # ここまで、入力
     # --------------
@@ -54,10 +54,10 @@ INPUT
 
 
     # print('★A')
-    # print_board(
+    # print(stringify_board(
     #         width=width,
     #         height=height,
-    #         board=board_rw)
+    #         board=board_rw))
 
     if short_side == WIDTH_IS_SHORTER:
         # 横の方が短いときは、時計回りに９０°回転させる
@@ -71,10 +71,10 @@ INPUT
 
 
     # print('★B')
-    # print_board(
+    # print(stringify_board(
     #         width=width,
     #         height=height,
-    #         board=board_rw)
+    #         board=board_rw))
 
 
     # 千切りフェーズ
@@ -85,10 +85,10 @@ INPUT
 
 
     # print('★C')
-    # print_board(
+    # print(stringify_board(
     #         width=width,
     #         height=height,
-    #         board=board_rw)
+    #         board=board_rw))
 
 
     # 浸食フェーズ
@@ -111,10 +111,10 @@ INPUT
     print("""\
 TERMINATED
 ----------""")
-    print_board(
+    print(stringify_board(
             width=width,
             height=height,
-            board=board_rw)
+            board=board_rw))
 
 
 def rotate90_counterclockwise(width, height, board_r):
@@ -278,10 +278,10 @@ def erosion(width, height, board_rw, end_ren_id):
                 print(f"""\
 EROSION {ren_id=}
 -----------------""")
-                print_board(
+                print(stringify_board(
                         width=width,
                         height=height,
-                        board=board_rw)
+                        board=board_rw))
 
         erosion_ren_id_set = erosion_ren_id_set.union(new_id_set_on_next)  # 浸食済みのIdとして記憶
 
@@ -330,7 +330,7 @@ def fill_foot(width, board_rw, x1, y1, y2, ren_id):
         x3 += 1
 
 
-def print_board(width, height, board):
+def stringify_board(width, height, board):
     """盤の表示
     """
     # 最大の連Idを調べる
@@ -356,7 +356,7 @@ def print_board(width, height, board):
             text.append(str(ren_id).rjust(digits))
         text.append('\n')
 
-    print(''.join(text))
+    return ''.join(text)
 
 
 ########################################

@@ -1,4 +1,6 @@
 # Divide into fewer rectangles
+logs/*
+!logs/.gitkeep
 private/
 
 
