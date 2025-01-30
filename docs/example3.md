@@ -17,9 +17,9 @@ Output:
 
 ```plaintext
 横幅、縦幅のあとに図形を続けてください。
+
 EXAMPLE
 -------
-
 7 5
 ..xxx..
 xxxxx..
@@ -29,17 +29,16 @@ xxxxxxx
 
 INPUT
 -----
-
 8 3
 ..x..x..
 xxxxxxxx
 xxxxxxxx
 
-RESULT
+OUTPUT
 ------
 00100200
-33155266
-33155266
+33333333
+33333333
 ```
 
 
