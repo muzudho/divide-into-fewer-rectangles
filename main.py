@@ -25,8 +25,8 @@ INPUT
 """
     lines = input(prompt)
 
-    write_log_ln(prompt)
-    write_log_ln(lines)
+    write_log(prompt, end='')
+    write_log(lines, end='')
 
     width, height = map(int, lines.split(' '))
 
@@ -36,7 +36,8 @@ INPUT
         lines = input()
         board_rw.extend(lines)
 
-    write_log_ln(stringify_board(
+    print() # 改行
+    write_log(stringify_board(
             width=width,
             height=height,
             board=board_rw))
@@ -57,13 +58,14 @@ INPUT
         short_side = WIDTH_IS_SHORTER
 
 
-    write_log_ln("""\
-A
-----""")
-    write_log_ln(stringify_board(
+    message = stringify_board(
             width=width,
             height=height,
-            board=board_rw))
+            board=board_rw)
+    write_log(f"""\
+A
+----
+{message}""")
 
     if short_side == WIDTH_IS_SHORTER:
         # 横の方が短いときは、時計回りに９０°回転させる
@@ -76,13 +78,14 @@ A
                 board_r=board_rw)
 
 
-    write_log_ln("""\
-B
-----""")
-    write_log_ln(stringify_board(
+    message = stringify_board(
             width=width,
             height=height,
-            board=board_rw))
+            board=board_rw)
+    write_log(f"""\
+B
+----
+{message}""")
 
 
     # 千切りフェーズ
@@ -92,13 +95,14 @@ B
             board_rw=board_rw)
 
 
-    write_log_ln("""\
-C
-----""")
-    write_log_ln(stringify_board(
+    message = stringify_board(
             width=width,
             height=height,
-            board=board_rw))
+            board=board_rw)
+    write_log(f"""\
+C
+----
+{message}""")
 
 
     # 浸食フェーズ
@@ -118,18 +122,16 @@ C
 
 
     # 結果表示
-    message = """\
-TERMINATED
-----------"""
-    print(message)
-    write_log_ln(message)
-
     message = stringify_board(
             width=width,
             height=height,
             board=board_rw)
+    message = f"""\
+TERMINATED
+----------
+{message}"""
     print(message)
-    write_log_ln(message)
+    write_log(message)
 
 
 def rotate90_counterclockwise(width, height, board_r):
@@ -290,13 +292,14 @@ def erosion(width, height, board_rw, end_ren_id):
 
                     y2 += 1
 
-                print(f"""\
-EROSION {ren_id=}
------------------""")
-                print(stringify_board(
+                message = stringify_board(
                         width=width,
                         height=height,
-                        board=board_rw))
+                        board=board_rw)
+                write_log(f"""\
+EROSION {ren_id=}
+-----------------
+{message}""")
 
         erosion_ren_id_set = erosion_ren_id_set.union(new_id_set_on_next)  # 浸食済みのIdとして記憶
 
@@ -378,9 +381,9 @@ def stringify_board(width, height, board):
     return ''.join(text)
 
 
-def write_log_ln(text):
+def write_log(text, end='\n'):
     with open('./logs/main.log', mode='a', encoding='utf-8') as f:
-        f.write(text + '\n')
+        f.write(f'{text}{end}')
 
 
 ########################################
