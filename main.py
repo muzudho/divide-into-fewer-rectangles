@@ -23,18 +23,18 @@ xxxxxxx
 INPUT
 -----
 """
-    lines = input(prompt)
+    line = input(prompt)
 
     write_log(prompt, end='')
-    write_log(lines, end='')
+    write_log(line)
 
-    width, height = map(int, lines.split(' '))
+    width, height = map(int, line.split(' '))
 
     board_rw = []
 
     for row_number in range(0, height):
-        lines = input()
-        board_rw.extend(lines)
+        line = input()
+        board_rw.extend(line)
 
     print() # 改行
     write_log(stringify_board(
@@ -127,8 +127,8 @@ C
             height=height,
             board=board_rw)
     message = f"""\
-TERMINATED
-----------
+OUTPUT
+------
 {message}"""
     print(message)
     write_log(message)
@@ -214,12 +214,15 @@ def erosion(width, height, board_rw, end_ren_id):
 
     # 盤面スキャン
     ren_id = EMPTY
+
+    # 下に進む
     for y1 in range(0, height):
 
         # 現在処理中の行の中で、既に出てきた連Id
         ren_id_in_same_row = set()
         new_id_set_on_next = set()
 
+        # 右に進む
         for x1 in range(0, width):
             index1 = y1 * width + x1
 
@@ -227,7 +230,7 @@ def erosion(width, height, board_rw, end_ren_id):
             if ren_id != board_rw[index1]:
                 ren_id = board_rw[index1]
 
-                # 連Id が 0 なら空地。無視する
+                # 空地。次へ
                 if board_rw[index1] == EMPTY:
                     continue
 
@@ -239,6 +242,7 @@ def erosion(width, height, board_rw, end_ren_id):
                     board_rw[y1 * width + x1] = end_ren_id
 
                     x3 = x1 + 1
+                    # 右へ進む
                     while x3 < width:
                         if board_rw[y1 * width + x3] != ren_id:     # 連の幅に達した
                             break
@@ -264,6 +268,8 @@ def erosion(width, height, board_rw, end_ren_id):
 
 
                 y2 = y1 + 1
+
+                # 下に進む
                 while y2 < height:
 
                     # 連を１行下に伸ばせるか判定します
@@ -309,6 +315,7 @@ def can_falling(width, board_rw, x1, y1, y2, ren_id):
     """
     can_falling_flag = True
     x3 = x1 + 1
+    # 右に進む
     while x3 < width:
         # 連の幅に達した
         if board_rw[y1 * width + x3] != ren_id:
