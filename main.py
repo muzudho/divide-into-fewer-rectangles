@@ -54,18 +54,16 @@ INPUT
     HEIGHT_IS_SHORTER = 2
     if height < width:
         short_side = HEIGHT_IS_SHORTER
+        write_log(f"""\
+HEIGHT_IS_SHORTER
+""")
+
     else:
         short_side = WIDTH_IS_SHORTER
+        write_log(f"""\
+WIDTH_IS_SHORTER
+""")
 
-
-    message = stringify_board(
-            width=width,
-            height=height,
-            board=board_rw)
-    write_log(f"""\
-A
-----
-{message}""")
 
     if short_side == WIDTH_IS_SHORTER:
         # 横の方が短いときは、時計回りに９０°回転させる
@@ -77,14 +75,13 @@ A
                 height=height,
                 board_r=board_rw)
 
-
-    message = stringify_board(
-            width=width,
-            height=height,
-            board=board_rw)
-    write_log(f"""\
-B
-----
+        message = stringify_board(
+                width=width,
+                height=height,
+                board=board_rw)
+        write_log(f"""\
+ROTATED90 CLOCKWISE
+-------------------
 {message}""")
 
 
@@ -100,8 +97,8 @@ B
             height=height,
             board=board_rw)
     write_log(f"""\
-C
-----
+SHREDDED
+--------
 {message}""")
 
 
@@ -339,15 +336,15 @@ def can_falling(width, board_rw, x1, y1, y2, ren_id):
 def fill_foot(width, board_rw, x1, y1, y2, ren_id):
     x3 = x1
     while x3 < width:
-        # 連の幅に達した
+        # 右の外の連Idが変わった
         if board_rw[y1 * width + x3] != ren_id:
             break
 
-        # 空地に達した
+        # 下が空地だ
         if board_rw[y2 * width + x3] == EMPTY:
             break
 
-        # 連Idが変わった
+        # 下の連Idが変わった
         if board_rw[y2 * width + x3] != board_rw[y2 * width + x3]:
             break
 
