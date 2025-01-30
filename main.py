@@ -8,10 +8,11 @@ def main():
     # ここから、入力
     # --------------
 
-    prompt = f"""横幅、縦幅のあとに図形を続けてください。
+    prompt = f"""\
+横幅、縦幅のあとに図形を続けてください。
+
 EXAMPLE
 -------
-
 7 5
 ..xxx..
 xxxxx..
@@ -21,7 +22,6 @@ xxxxxxx
 
 INPUT
 -----
-
 """
     lines = input(prompt)
     width, height = map(int, lines.split(' '))
@@ -109,9 +109,8 @@ INPUT
 
     # 結果表示
     print("""\
-
-RESULT
-------""")
+TERMINATED
+----------""")
     print_board(
             width=width,
             height=height,
@@ -276,11 +275,13 @@ def erosion(width, height, board_rw, end_ren_id):
 
                     y2 += 1
 
-                # print('★X')
-                # print_board(
-                #         width=width,
-                #         height=height,
-                #         board=board_rw)
+                print(f"""\
+EROSION {ren_id=}
+-----------------""")
+                print_board(
+                        width=width,
+                        height=height,
+                        board=board_rw)
 
         erosion_ren_id_set = erosion_ren_id_set.union(new_id_set_on_next)  # 浸食済みのIdとして記憶
 
@@ -345,13 +346,17 @@ def print_board(width, height, board):
     digits = math.floor(math.log10(max_ren_id) + 1)     # 常用対数を取り、１を足し、端数を削除
 
 
+    text = []
+
     # 印字
     for y in range(0, height):
         for x in range(0, width):
             index = y * width + x
             ren_id = board[index]
-            print(str(ren_id).rjust(digits), end='')
-        print() # 改行
+            text.append(str(ren_id).rjust(digits))
+        text.append('\n')
+
+    print(''.join(text))
 
 
 ########################################
