@@ -289,6 +289,9 @@ def erosion(width, height, board_rw, end_ren_id):
 
                     # １行下に伸ばせないなら終わり
                     if not can_falling_flag:
+                        write_log("""\
+１行下に伸ばせない。浸食終わり。
+""")
                         break
 
 
@@ -327,16 +330,20 @@ def can_falling(width, board_rw, x1, y1, y2, ren_id):
     else:
         under_left_ren_id = None
 
+    write_log(f"""\
+{target_ren_id=} {under_left_ren_id=}
+""")
+
     can_falling_flag = True
     under_right_ren_id = None
     x3 = x1 + 1
 
     # 右に進む
     while x3 < width:
-        under_right_ren_id = board_rw[y1 * width + x3]
+        under_right_ren_id = board_rw[y2 * width + x3]
 
         # 右の外の連Idが変わった
-        if ren_id != under_right_ren_id:
+        if ren_id != board_rw[y1 * width + x3]:
             break
 
         # 下が空地だ
@@ -352,8 +359,13 @@ def can_falling(width, board_rw, x1, y1, y2, ren_id):
         x3 += 1
 
 
+    write_log(f"""\
+{target_ren_id=} {under_right_ren_id=}
+""")
+
+
     # 下の行の１つの短冊を、２つに分断するようなら、下に浸食しません
-    if under_left_ren_id is not None or under_right_ren_id is not None:
+    if under_left_ren_id is None or under_right_ren_id is None:
         pass
     elif under_left_ren_id == target_ren_id and under_right_ren_id == target_ren_id:
         return False
