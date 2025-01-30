@@ -9,7 +9,7 @@
 
 ### 概要
 
-![例１概要](./docs/img/202501__pg__29-2316--explain-o1o3.png)  
+![例１概要](./docs/img/202501__pg__31-0131--explain-o2o0.png)  
 
 
 ### 実行例
@@ -54,7 +54,7 @@ OUTPUT
 
 ### アルゴリズム解説
 
-![解説1](./docs/img/202501__pg__29-2322--explain-o1o4.png)  
+![解説1](./docs/img/202501__pg__31-0131--explain-o1o0.png)  
 
 
 ## その他の実行例
