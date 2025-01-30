@@ -24,6 +24,10 @@ INPUT
 -----
 """
     lines = input(prompt)
+
+    write_log_ln(prompt)
+    write_log_ln(lines)
+
     width, height = map(int, lines.split(' '))
 
     board_rw = []
@@ -32,10 +36,10 @@ INPUT
         lines = input()
         board_rw.extend(lines)
 
-    # print(stringify_board(
-    #         width=width,
-    #         height=height,
-    #         board=board_rw))
+    write_log_ln(stringify_board(
+            width=width,
+            height=height,
+            board=board_rw))
 
     # ここまで、入力
     # --------------
@@ -53,11 +57,13 @@ INPUT
         short_side = WIDTH_IS_SHORTER
 
 
-    # print('★A')
-    # print(stringify_board(
-    #         width=width,
-    #         height=height,
-    #         board=board_rw))
+    write_log_ln("""\
+A
+----""")
+    write_log_ln(stringify_board(
+            width=width,
+            height=height,
+            board=board_rw))
 
     if short_side == WIDTH_IS_SHORTER:
         # 横の方が短いときは、時計回りに９０°回転させる
@@ -70,11 +76,13 @@ INPUT
                 board_r=board_rw)
 
 
-    # print('★B')
-    # print(stringify_board(
-    #         width=width,
-    #         height=height,
-    #         board=board_rw))
+    write_log_ln("""\
+B
+----""")
+    write_log_ln(stringify_board(
+            width=width,
+            height=height,
+            board=board_rw))
 
 
     # 千切りフェーズ
@@ -84,11 +92,13 @@ INPUT
             board_rw=board_rw)
 
 
-    # print('★C')
-    # print(stringify_board(
-    #         width=width,
-    #         height=height,
-    #         board=board_rw))
+    write_log_ln("""\
+C
+----""")
+    write_log_ln(stringify_board(
+            width=width,
+            height=height,
+            board=board_rw))
 
 
     # 浸食フェーズ
@@ -108,13 +118,18 @@ INPUT
 
 
     # 結果表示
-    print("""\
+    message = """\
 TERMINATED
-----------""")
-    print(stringify_board(
+----------"""
+    print(message)
+    write_log_ln(message)
+
+    message = stringify_board(
             width=width,
             height=height,
-            board=board_rw))
+            board=board_rw)
+    print(message)
+    write_log_ln(message)
 
 
 def rotate90_counterclockwise(width, height, board_r):
@@ -339,11 +354,15 @@ def stringify_board(width, height, board):
         for x in range(0, width):
             index = y * width + x
             ren_id = board[index]
-            max_ren_id = max(max_ren_id, ren_id)
+            if isinstance(ren_id, int):
+                max_ren_id = max(max_ren_id, ren_id)
 
 
     # 最大の連Idの桁数を調べる
-    digits = math.floor(math.log10(max_ren_id) + 1)     # 常用対数を取り、１を足し、端数を削除
+    if max_ren_id == 0:
+        digits = 1
+    else:
+        digits = math.floor(math.log10(max_ren_id) + 1)     # 常用対数を取り、１を足し、端数を削除
 
 
     text = []
@@ -357,6 +376,11 @@ def stringify_board(width, height, board):
         text.append('\n')
 
     return ''.join(text)
+
+
+def write_log_ln(text):
+    with open('./logs/main.log', mode='a', encoding='utf-8') as f:
+        f.write(text + '\n')
 
 
 ########################################
